@@ -116,7 +116,6 @@ export default {
       console.log(body)
       axios.post(`https://api.meetime.com.br/v2/prospections/cadence/${params.id}/lead`, body, {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
           .then(response => {
-            // this.list = response.data
             console.log(response)
           })
           .catch(e => {
@@ -126,20 +125,15 @@ export default {
     },
     handleParams() {
       const params = {
-        "annotations": "",
         "city": "Florianópolis",
         "company": "Acme",
-        "customFields": {
-          "chave_do_campoPersonalizado1": "",
-          "chave_do_campoPersonalizado2": ""
-        },
-        "email": 'teste@teste.com',
+        "email": "example@example.com",
         "facebook": "",
         "firstName": "Joe",
-        "id": 11367,
+        "id": 1,
         "inboud": true,
         "linkedIn": "",
-        "name": 'vini',
+        "name": "Joe Doe",
         "originType": "IMPORTED_FROM_LIST",
         "phones": [
           {

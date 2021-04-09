@@ -28,10 +28,10 @@ export default {
       list: [],
       errors: [],
       headers: [
-        { text: 'Id', value: 'id' },
-        { text: 'Name', value: 'name' },
-        { text: 'Token', value: 'token' },
-        { text: 'API_endpoint', value: 'api_endpoint' },
+        { text: 'Name', value: 'lead_name' },
+        { text: 'Created At', value: 'lead_created_date' },
+        { text: 'Phone', value: 'phone' },
+        { text: 'Actions' },
       ],
     }
   },
@@ -40,14 +40,23 @@ export default {
   },
   methods: {
     getList() {
-      axios.get('https://api.meetime.com.br/v2/cadences', {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
+      axios.get('https://api.meetime.com.br/v2/leads', {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
           .then(response => {
-            this.list = response.data.data
-            console.log(this.list)
+            this.responseHandler(response.data.data)
           })
           .catch(e => {
             this.errors.push(e)
           })
+    },
+    responseHandler(resp) {
+      const newResp = resp.map((item) => {
+        return {
+          lead_name: item.lead_name,
+          lead_created_date: item.lead_created_date,
+          phone: item.phones[0].phone
+        }
+      })
+      this.list = newResp
     }
   }
 }
