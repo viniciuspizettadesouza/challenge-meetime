@@ -1,8 +1,9 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
-        <p>Add lead</p></v-col>
+      <v-col class="mt-16">
+        <h1>Add lead</h1>
+      </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
