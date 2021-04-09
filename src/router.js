@@ -7,16 +7,15 @@ export default new Router({
     mode: "history",
     routes: [
         {
-            path: "/leads",
-            alias: "/leads",
-            name: "leads",
-            component: () => import("./components/ListLeads")
-        },
-        {
-            path: "/add",
+            path: "/",
             alias: "/add",
             name: "add",
             component: () => import("./components/AddLeads")
+        },
+        {
+            path: "/leads",
+            name: "leads",
+            component: () => import("./components/ListLeads")
         },
     ]
 });

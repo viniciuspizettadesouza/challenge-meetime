@@ -18,7 +18,7 @@ export default {
       errors: []
     }
   },
-  created() {
+  mounted() {
     this.getList()
   },
   methods: {

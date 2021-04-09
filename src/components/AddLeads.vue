@@ -56,6 +56,7 @@
 <script>
 import {validationMixin} from 'vuelidate'
 import {required, maxLength, email} from 'vuelidate/lib/validators'
+import axios from "axios";
 
 export default {
   name: "AddLeads",
@@ -77,13 +78,13 @@ export default {
     email: '',
     select: null,
     items: [
-      'Item 1',
-      'Item 2',
-      'Item 3',
-      'Item 4',
-    ]
+      'Cadence 1',
+      'Cadence 2',
+      'Cadence 3',
+      'Cadence 4',
+    ],
+    errors: []
   }),
-
   computed: {
     selectErrors() {
       const errors = []
@@ -106,10 +107,53 @@ export default {
       return errors
     },
   },
-
   methods: {
     submit() {
-      this.$v.$touch()
+      const params = this.handleParams()
+
+      const body = JSON.stringify(params)
+      console.log(body)
+      axios.post(`https://api.meetime.com.br/v2/prospections/cadence/${params.id}/lead`, body, {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
+          .then(response => {
+            // this.list = response.data
+            console.log(response)
+          })
+          .catch(e => {
+            this.errors.push(e)
+          })
+      this.postLead(params)
+    },
+    handleParams() {
+      const params = {
+        "annotations": "",
+        "city": "Florianópolis",
+        "company": "Acme",
+        "customFields": {
+          "chave_do_campoPersonalizado1": "",
+          "chave_do_campoPersonalizado2": ""
+        },
+        "email": 'teste@teste.com',
+        "facebook": "",
+        "firstName": "Joe",
+        "id": 11367,
+        "inboud": true,
+        "linkedIn": "",
+        "name": 'vini',
+        "originType": "IMPORTED_FROM_LIST",
+        "phones": [
+          {
+            "label": "",
+            "lastUsage": "2021-03-24T22:59:19.86Z",
+            "phone": "1234-1234"
+          }
+        ],
+        "position": "Head of naming",
+        "site": "https://acme.corp",
+        "state": "Santa Catarina",
+        "status": "WAITING",
+        "twitter": ""
+      }
+      return params
     },
     clear() {
       this.$v.$reset()
