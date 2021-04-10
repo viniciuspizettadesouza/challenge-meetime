@@ -21,9 +21,8 @@
           <v-text-field
               v-model="name"
               :error-messages="nameErrors"
-              :counter="10"
+              :counter="20"
               label="Name"
-              required
               @input="$v.name.$touch()"
               @blur="$v.name.$touch()"
               outlined
@@ -35,6 +34,15 @@
               required
               @input="$v.email.$touch()"
               @blur="$v.email.$touch()"
+              outlined
+          ></v-text-field>
+          <v-text-field
+              v-model="phone"
+              :error-messages="phoneErrors"
+              label="Phone"
+              required
+              @input="$v.phone.$touch()"
+              @blur="$v.phone.$touch()"
               outlined
           ></v-text-field>
 
@@ -66,9 +74,10 @@ export default {
   mixins: [validationMixin],
 
   validations: {
-    name: {required, maxLength: maxLength(10)},
+    name: {maxLength: maxLength(20)},
     email: {required, email},
-    select: {required}
+    select: {required},
+    phone: {required}
   },
 
   data() {
@@ -76,6 +85,7 @@ export default {
       name: '',
       email: '',
       select: null,
+      phone: '',
       cadencesResponse: [],
       cadencesNames: [],
       errors: [],
@@ -95,8 +105,7 @@ export default {
     nameErrors() {
       const errors = []
       if (!this.$v.name.$dirty) return errors
-      !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long')
-      !this.$v.name.required && errors.push('Name is required.')
+      !this.$v.name.maxLength && errors.push('Name must be at most 20 characters long')
       return errors
     },
     emailErrors() {
@@ -104,6 +113,12 @@ export default {
       if (!this.$v.email.$dirty) return errors
       !this.$v.email.email && errors.push('Must be valid e-mail')
       !this.$v.email.required && errors.push('E-mail is required')
+      return errors
+    },
+    phoneErrors() {
+      const errors = []
+      if (!this.$v.phone.$dirty) return errors
+      !this.$v.phone.required && errors.push('Phone is required')
       return errors
     },
   },
@@ -136,7 +151,7 @@ export default {
         "name": this.name,
         "phones": [
           {
-            "phone": "1234-1234"
+            "phone": this.phone
           }
         ],
       }
@@ -146,6 +161,7 @@ export default {
       this.name = ''
       this.email = ''
       this.select = null
+      this.phone = ''
     },
     getCadences() {
       axios.get('https://api.meetime.com.br/v2/cadences', {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})

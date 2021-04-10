@@ -49,14 +49,19 @@ export default {
           })
     },
     responseHandler(resp) {
-      const newResp = resp.map((item) => {
+      this.list = resp.map((item) => {
         return {
           lead_name: item.lead_name,
           lead_created_date: item.lead_created_date,
-          phone: item.phones[0].phone
+          phone: this.searchPhone(item.phones)
         }
       })
-      this.list = newResp
+    },
+    searchPhone(phone) {
+      if(phone) {
+        return phone[0].phone
+      }
+      return null
     }
   }
 }
