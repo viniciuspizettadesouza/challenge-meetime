@@ -10,7 +10,7 @@
         <form>
           <v-select
               v-model="select"
-              :items="items"
+              :items="cadencesNames"
               :error-messages="selectErrors"
               label="Cadence"
               required
@@ -74,18 +74,19 @@ export default {
     },
   },
 
-  data: () => ({
-    name: '',
-    email: '',
-    select: null,
-    items: [
-      'Cadence 1',
-      'Cadence 2',
-      'Cadence 3',
-      'Cadence 4',
-    ],
-    errors: []
-  }),
+  data() {
+    return {
+      name: '',
+      email: '',
+      select: null,
+      cadencesArray: [],
+      cadencesNames: [],
+      errors: []
+    }
+  },
+  mounted() {
+    this.getCadences()
+  },
   computed: {
     selectErrors() {
       const errors = []
@@ -111,10 +112,8 @@ export default {
   methods: {
     submit() {
       const params = this.handleParams()
-
       const body = JSON.stringify(params)
-      console.log(body)
-      axios.post(`https://api.meetime.com.br/v2/prospections/cadence/${params.id}/lead`, body, {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
+      axios.post(`https://api.meetime.com.br/v2/prospections/cadence/${params.id}/lead?token=${params.token}`, body, {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
           .then(response => {
             console.log(response)
           })
@@ -156,6 +155,18 @@ export default {
       this.email = ''
       this.select = null
       this.checkbox = false
+    },
+    getCadences() {
+      axios.get('https://api.meetime.com.br/v2/cadences', {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
+          .then(response => {
+            this.cadencesResponse = response.data.data
+            this.cadencesNames = this.cadencesResponse.map((item) => {
+              return item.name
+            })
+          })
+          .catch(e => {
+            this.errors.push(e)
+          })
     },
   },
 }
