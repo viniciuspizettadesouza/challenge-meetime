@@ -49,6 +49,8 @@
             SUBMIT
           </v-btn>
         </form>
+        <p v-if="submitStatus === 'OK'">Thanks for your submission!</p>
+        <p v-if="submitStatus === 'PENDING'">Sending...</p>
       </v-col>
     </v-row>
   </v-container>
@@ -66,12 +68,7 @@ export default {
   validations: {
     name: {required, maxLength: maxLength(10)},
     email: {required, email},
-    select: {required},
-    checkbox: {
-      checked(val) {
-        return val
-      },
-    },
+    select: {required}
   },
 
   data() {
@@ -79,9 +76,10 @@ export default {
       name: '',
       email: '',
       select: null,
-      cadencesArray: [],
+      cadencesResponse: [],
       cadencesNames: [],
-      errors: []
+      errors: [],
+      submitStatus: null
     }
   },
   mounted() {
@@ -111,50 +109,43 @@ export default {
   },
   methods: {
     submit() {
-      const params = this.handleParams()
-      const body = JSON.stringify(params)
-      axios.post(`https://api.meetime.com.br/v2/prospections/cadence/${params.id}/lead?token=${params.token}`, body, {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
-          .then(response => {
-            console.log(response)
-          })
-          .catch(e => {
-            this.errors.push(e)
-          })
-      this.postLead(params)
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        return null
+      } else {
+        this.submitStatus = 'PENDING'
+        const cadence = this.cadencesResponse.find(item => {
+          return item ? item.name === this.select : false
+        })
+
+        if (cadence) {
+          const params = this.handleParams()
+          axios.post(`https://api.meetime.com.br/v2/prospections/cadence/${cadence.id}/lead?token=${cadence.token}`, params)
+              .catch(e => {
+                this.errors.push(e)
+              })
+        }
+        setTimeout(() => {
+          this.submitStatus = 'OK'
+        }, 500)
+      }
     },
     handleParams() {
-      const params = {
-        "city": "Florianópolis",
-        "company": "Acme",
-        "email": "example@example.com",
-        "facebook": "",
-        "firstName": "Joe",
-        "id": 1,
-        "inboud": true,
-        "linkedIn": "",
-        "name": "Joe Doe",
-        "originType": "IMPORTED_FROM_LIST",
+      return {
+        "email": this.email,
+        "name": this.name,
         "phones": [
           {
-            "label": "",
-            "lastUsage": "2021-03-24T22:59:19.86Z",
             "phone": "1234-1234"
           }
         ],
-        "position": "Head of naming",
-        "site": "https://acme.corp",
-        "state": "Santa Catarina",
-        "status": "WAITING",
-        "twitter": ""
       }
-      return params
     },
     clear() {
       this.$v.$reset()
       this.name = ''
       this.email = ''
       this.select = null
-      this.checkbox = false
     },
     getCadences() {
       axios.get('https://api.meetime.com.br/v2/cadences', {headers: {'Authorization': 'CEjGRDXGAu8XcilvM9fzpInHBzH2cGes'}})
